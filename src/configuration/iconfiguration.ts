@@ -173,6 +173,16 @@ export interface IConfiguration {
   searchHighlightColor: string;
 
   /**
+   * Enable highlighting when yanking.
+   */
+  yankHighlighting: boolean;
+
+  /**
+   * Color of yank highlights.
+   */
+  yankHighlightColor: string;
+
+  /**
    * Size of a tab character.
    */
   tabstop: number;

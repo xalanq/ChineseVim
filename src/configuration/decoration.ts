@@ -24,4 +24,10 @@ export class Decoration {
   static readonly EasyMotion = vscode.window.createTextEditorDecorationType({
     backgroundColor: configuration.searchHighlightColor,
   });
+
+  static get YankHighlight() {
+    return vscode.window.createTextEditorDecorationType({
+      backgroundColor: configuration.yankHighlightColor,
+    });
+  }
 }

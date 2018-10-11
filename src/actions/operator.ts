@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { Position, PositionDiff } from './../common/motion/position';
 import { Range } from './../common/motion/range';
 import { configuration } from './../configuration/configuration';
+import { Decoration } from '../configuration/decoration';
 import { ModeName } from './../mode/mode';
 import { Register, RegisterMode } from './../register/register';
 import { VimState } from './../state/vimState';
@@ -268,7 +269,8 @@ export class YankOperator extends BaseOperator {
       end = end.getLineEnd();
     }
 
-    let text = TextEditor.getText(new vscode.Range(start, end));
+    const range = new vscode.Range(start, end);
+    let text = TextEditor.getText(range);
 
     // If we selected the newline character, add it as well.
     if (
@@ -276,6 +278,12 @@ export class YankOperator extends BaseOperator {
       end.character === TextEditor.getLineAt(end).text.length + 1
     ) {
       text = text + '\n';
+    }
+
+    if (configuration.yankHighlighting) {
+      const decoration = Decoration.YankHighlight;
+      vimState.editor.setDecorations(decoration, [range]);
+      setTimeout(() => decoration.dispose(), 200);
     }
 
     Register.put(text, vimState, this.multicursorIndex);
@@ -645,17 +653,24 @@ export class YankVisualBlockMode extends BaseOperator {
     return false;
   }
 
-  public async run(vimState: VimState, start: Position, end: Position): Promise<VimState> {
+  public async run(vimState: VimState, startPos: Position, endPos: Position): Promise<VimState> {
     let toCopy: string = '';
+    const ranges: vscode.Range[] = [];
+    const isMultiline = startPos.line !== endPos.line;
 
-    const isMultiline = start.line !== end.line;
-
-    for (const { line } of Position.IterateLine(vimState)) {
+    for (const { line, start, end } of Position.IterateLine(vimState)) {
+      ranges.push(new vscode.Range(start, end));
       if (isMultiline) {
         toCopy += line + '\n';
       } else {
         toCopy = line;
       }
+    }
+
+    if (configuration.yankHighlighting) {
+      const decoration = Decoration.YankHighlight;
+      vimState.editor.setDecorations(decoration, ranges);
+      setTimeout(() => decoration.dispose(), 200);
     }
 
     vimState.currentRegisterMode = RegisterMode.BlockWise;
@@ -666,7 +681,7 @@ export class YankVisualBlockMode extends BaseOperator {
     ReportLinesYanked(numLinesYanked, vimState);
 
     await vimState.setCurrentMode(ModeName.Normal);
-    vimState.cursorPosition = start;
+    vimState.cursorPosition = startPos;
     return vimState;
   }
 }
