@@ -1,5 +1,5 @@
 <h2 align="center"><img src="https://raw.githubusercontent.com/VSCodeVim/Vim/master/images/icon.png" height="128"><br>VSCodeVim</h2>
-<p align="center"><strong>Vim emulation for Visual Studio Code</strong></p>
+<p align="center"><strong>Vim emulation for Visual Studio Code for Chinese users -- A unofficial fork</strong></p>
 
 [![http://aka.ms/vscodevim](https://vsmarketplacebadge.apphb.com/version/vscodevim.vim.svg)](http://aka.ms/vscodevim)
 [![](https://vsmarketplacebadge.apphb.com/installs-short/vscodevim.vim.svg)](https://marketplace.visualstudio.com/items?itemName=vscodevim.vim)
